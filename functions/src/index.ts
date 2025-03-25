@@ -1,7 +1,7 @@
 import * as admin from "firebase-admin";
 import { onRequest } from "firebase-functions/v2/https";
 import { seedDatabase } from "./seed-database";
-import { getBooks, updateBook } from "./book";
+import { getBooks, updateBook, assignLicense, returnLicense } from "./book";
 import { getPricing } from "./license-pricing";
 import { purchaseLicense, checkPurchaseStatus } from "./license-purchase";
 import { getPublisherDetails, updatePublisherDetails } from "./publisher";
@@ -73,7 +73,7 @@ export const checkPurchaseStatusRequest = onRequest(
 // publisher.ts
 export const getPublisherDetailsRequest = onRequest(
   async (request, response) => {
-    const { userId } = request.body;
+    const userId = request.query.userId as string;
     const result = await getPublisherDetails(userId);
     if (!result.success) {
       response.status(500).send(result.message);
@@ -93,3 +93,21 @@ export const updatePublisherDetailsRequest = onRequest(
     response.send(result.message);
   }
 );
+export const assignLicenseRequest = onRequest(async (request, response) => {
+  const { bookId, userId, userEmail } = request.body;
+  const result = await assignLicense(bookId, userId, userEmail);
+  if (!result.success) {
+    response.status(500).send(result.message);
+    return;
+  }
+  response.send(result.data);
+});
+export const returnLicenseRequest = onRequest(async (request, response) => {
+  const { bookId } = request.body;
+  const result = await returnLicense(bookId);
+  if (!result.success) {
+    response.status(500).send(result.message);
+    return;
+  }
+  response.send(result.data);
+});

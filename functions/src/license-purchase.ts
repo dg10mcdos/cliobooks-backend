@@ -1,8 +1,7 @@
 import { db } from ".";
-import { Purchase, PurchaseData, purchaseStatus, User } from "./types";
-import { v4 as uuid } from "uuid";
+import { Purchase, PurchaseRequestData, purchaseStatus, User } from "./types";
 
-export const purchaseLicense = async (purchaseData: PurchaseData) => {
+export const purchaseLicense = async (purchaseData: PurchaseRequestData) => {
   const tierDoc = await db
     .collection("pricingInformation")
     .doc(purchaseData.licenseTierId)
@@ -14,11 +13,10 @@ export const purchaseLicense = async (purchaseData: PurchaseData) => {
     throw new Error("License tier not found");
   }
   const tierData = tierDoc.data();
-  const purchaseId = uuid();
   const cost = purchaseData.licenseQuantity * tierData.price;
 
   const purchase = {
-    id: purchaseId,
+    id: purchaseData.purchaseId,
     userId: purchaseData.userId,
     licenseTierId: purchaseData.licenseTierId,
     licenseQuantity: purchaseData.licenseQuantity,
@@ -27,12 +25,12 @@ export const purchaseLicense = async (purchaseData: PurchaseData) => {
     purchaseStatus: purchaseStatus.PENDING,
   } as Purchase;
 
-  await db.collection("purchases").doc(purchaseId).set(purchase);
+  await db.collection("purchases").doc(purchaseData.purchaseId).set(purchase);
 
   await setTimeout(() => {}, 5000);
 
   if (Math.random() > 0.5) {
-    await db.collection("purchases").doc(purchaseId).update({
+    await db.collection("purchases").doc(purchaseData.purchaseId).update({
       purchaseStatus: "COMPLETED",
     });
     const userDoc = await db.collection("users").doc(purchaseData.userId).get();
@@ -47,11 +45,11 @@ export const purchaseLicense = async (purchaseData: PurchaseData) => {
     return {
       success: true,
       data: {
-        purchaseId,
+        purchaseId: purchaseData.purchaseId,
       },
     };
   } else {
-    await db.collection("purchases").doc(purchaseId).update({
+    await db.collection("purchases").doc(purchaseData.purchaseId).update({
       purchaseStatus: "FAILED",
     });
     return {

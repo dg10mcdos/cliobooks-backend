@@ -38,9 +38,10 @@ export type Purchase = {
   cost: number;
   purchaseStatus?: purchaseStatus;
 };
-export type PurchaseData = {
+export type PurchaseRequestData = {
   userId: string;
   licenseTierId: string;
+  purchaseId: string;
   licenseQuantity: number;
 };
 export type User = {
