@@ -42,29 +42,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.seedDatabase = void 0;
+exports.seedDatabase = exports.db = void 0;
 const admin = __importStar(require("firebase-admin"));
 const https_1 = require("firebase-functions/v2/https");
-const seed_data_1 = require("./types/seed-data");
-// const firebaseConfig = {
-//   apiKey: "AIzaSyAHEK-QxCvZD_A2_CJR0vv22QBdc_2z4aU",
-//   authDomain: "cliobooks-ffb4b.firebaseapp.com",
-//   projectId: "cliobooks-ffb4b",
-//   storageBucket: "cliobooks-ffb4b.firebasestorage.app",
-//   messagingSenderId: "732167774090",
-//   appId: "1:732167774090:web:ef04719874fa00b6023273",
-// };
+const seed_data_1 = require("./seed-data");
 admin.initializeApp();
-const db = admin.firestore();
+exports.db = admin.firestore();
 const seedCollection = (collectionName, data) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`Seeding collection: ${collectionName}`, data); // Log the data
-    const collectionRef = db.collection(collectionName);
+    const collectionRef = exports.db.collection(collectionName);
     const promises = data.map((item) => collectionRef.doc(item.id || item.tier).set(item));
     yield Promise.all(promises);
 });
 exports.seedDatabase = (0, https_1.onRequest)((request, response) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("Seeding user data:", seed_data_1.userData); // Log userData
-    yield db.collection("users").doc(seed_data_1.userData.id).set(seed_data_1.userData);
+    yield exports.db.collection("users").doc(seed_data_1.userData.id).set(seed_data_1.userData);
     yield seedCollection("books", seed_data_1.booksData);
     yield seedCollection("licenseAllocations", seed_data_1.licenseAllocationData);
     yield seedCollection("pricingInformation", seed_data_1.pricingInformation);

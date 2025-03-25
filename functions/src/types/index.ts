@@ -5,8 +5,13 @@ export enum licenseStatus {
   LICENSED = "LICENSED",
   RETURNED = "RETURNED",
 }
-
 export type LicenseStatus = keyof typeof licenseStatus;
+
+export enum purchaseStatus {
+  PENDING = "PENDING",
+  COMPLETED = "COMPLETED",
+}
+export type PurchaseStatus = keyof typeof purchaseStatus;
 
 export type Book = {
   id: string;
@@ -24,7 +29,20 @@ export type LicenseAllocation = {
   createdAt: number;
   updatedAt: number;
 };
-
+export type Purchase = {
+  id?: string;
+  userId: string;
+  licenseTierId: string;
+  licenseQuantity: number;
+  purchaseDate: number;
+  cost: number;
+  purchaseStatus?: purchaseStatus;
+};
+export type PurchaseData = {
+  userId: string;
+  licenseTierId: string;
+  licenseQuantity: number;
+};
 export type User = {
   id: string;
   email: string;
@@ -47,4 +65,9 @@ export type BookTableDataRow = {
   created: number;
   status: LicenseStatus;
   userEmail: string;
+};
+export type HelperResponse = {
+  success: boolean;
+  message?: string;
+  data?: any;
 };

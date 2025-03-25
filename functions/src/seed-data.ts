@@ -1,4 +1,4 @@
-import { Book, LicenseAllocation, User } from ".";
+import { Book, LicenseAllocation, User } from "./types";
 
 export const userData = {
   id: "user-1",

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.licenseStatus = void 0;
+exports.purchaseStatus = exports.licenseStatus = void 0;
 var licenseStatus;
 (function (licenseStatus) {
     licenseStatus["AVAILABLE"] = "AVAILABLE";
@@ -9,4 +9,9 @@ var licenseStatus;
     licenseStatus["LICENSED"] = "LICENSED";
     licenseStatus["RETURNED"] = "RETURNED";
 })(licenseStatus || (exports.licenseStatus = licenseStatus = {}));
+var purchaseStatus;
+(function (purchaseStatus) {
+    purchaseStatus["PENDING"] = "PENDING";
+    purchaseStatus["COMPLETED"] = "COMPLETED";
+})(purchaseStatus || (exports.purchaseStatus = purchaseStatus = {}));
 //# sourceMappingURL=index.js.map

@@ -6,20 +6,11 @@ import {
   licenseAllocationData,
   pricingInformation,
   userData,
-} from "./types/seed-data";
-
-// const firebaseConfig = {
-//   apiKey: "AIzaSyAHEK-QxCvZD_A2_CJR0vv22QBdc_2z4aU",
-//   authDomain: "cliobooks-ffb4b.firebaseapp.com",
-//   projectId: "cliobooks-ffb4b",
-//   storageBucket: "cliobooks-ffb4b.firebasestorage.app",
-//   messagingSenderId: "732167774090",
-//   appId: "1:732167774090:web:ef04719874fa00b6023273",
-// };
+} from "./seed-data";
 
 admin.initializeApp();
 
-const db = admin.firestore();
+export const db = admin.firestore();
 
 const seedCollection = async (collectionName: string, data: any[]) => {
   console.log(`Seeding collection: ${collectionName}`, data); // Log the data
