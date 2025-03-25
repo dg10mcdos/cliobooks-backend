@@ -1,31 +1,36 @@
 import * as admin from "firebase-admin";
-
 import { onRequest } from "firebase-functions/v2/https";
-import {
-  booksData,
-  licenseAllocationData,
-  pricingInformation,
-  userData,
-} from "./seed-data";
+import { seedDatabase } from "./seed-database";
+import { getBooks, updateBook } from "./book";
 
 admin.initializeApp();
 
 export const db = admin.firestore();
 
-const seedCollection = async (collectionName: string, data: any[]) => {
-  console.log(`Seeding collection: ${collectionName}`, data); // Log the data
-  const collectionRef = db.collection(collectionName);
-  const promises = data.map((item) =>
-    collectionRef.doc(item.id || item.tier).set(item)
-  );
-  await Promise.all(promises);
-};
-
-export const seedDatabase = onRequest(async (request, response) => {
-  console.log("Seeding user data:", userData); // Log userData
-  await db.collection("users").doc(userData.id).set(userData);
-  await seedCollection("books", booksData);
-  await seedCollection("licenseAllocations", licenseAllocationData);
-  await seedCollection("pricingInformation", pricingInformation);
+export const seedDatabaseRequest = onRequest(async (request, response) => {
+  const result = await seedDatabase();
+  if (!result.success) {
+    response.status(500).send("Failed to seed database");
+    return;
+  }
   response.send("Database seeded successfully");
 });
+export const getBooksRequest = onRequest(async (request, response) => {
+  const result = await getBooks();
+  if (!result.success) {
+    response.status(500).send("Failed to get books");
+    return;
+  }
+  response.send(result.data);
+});
+export const updateBookRequest = onRequest(async (request, response) => {
+  const { bookId } = request.query;
+  const data = request.body;
+  const result = await updateBook(bookId as string, data);
+  if (!result.success) {
+    response.status(500).send("Failed to update book");
+    return;
+  }
+  response.send(result.message);
+});
+// TODO: Lay out rest of the functions here

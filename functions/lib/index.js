@@ -42,24 +42,38 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.seedDatabase = exports.db = void 0;
+exports.updateBookRequest = exports.getBooksRequest = exports.seedDatabaseRequest = exports.db = void 0;
 const admin = __importStar(require("firebase-admin"));
 const https_1 = require("firebase-functions/v2/https");
-const seed_data_1 = require("./seed-data");
+const seed_database_1 = require("./seed-database");
+const book_1 = require("./book");
 admin.initializeApp();
 exports.db = admin.firestore();
-const seedCollection = (collectionName, data) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(`Seeding collection: ${collectionName}`, data); // Log the data
-    const collectionRef = exports.db.collection(collectionName);
-    const promises = data.map((item) => collectionRef.doc(item.id || item.tier).set(item));
-    yield Promise.all(promises);
-});
-exports.seedDatabase = (0, https_1.onRequest)((request, response) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("Seeding user data:", seed_data_1.userData); // Log userData
-    yield exports.db.collection("users").doc(seed_data_1.userData.id).set(seed_data_1.userData);
-    yield seedCollection("books", seed_data_1.booksData);
-    yield seedCollection("licenseAllocations", seed_data_1.licenseAllocationData);
-    yield seedCollection("pricingInformation", seed_data_1.pricingInformation);
+exports.seedDatabaseRequest = (0, https_1.onRequest)((request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield (0, seed_database_1.seedDatabase)();
+    if (!result.success) {
+        response.status(500).send("Failed to seed database");
+        return;
+    }
     response.send("Database seeded successfully");
 }));
+exports.getBooksRequest = (0, https_1.onRequest)((request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield (0, book_1.getBooks)();
+    if (!result.success) {
+        response.status(500).send("Failed to get books");
+        return;
+    }
+    response.send(result.data);
+}));
+exports.updateBookRequest = (0, https_1.onRequest)((request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    const { bookId } = request.query;
+    const data = request.body;
+    const result = yield (0, book_1.updateBook)(bookId, data);
+    if (!result.success) {
+        response.status(500).send("Failed to update book");
+        return;
+    }
+    response.send(result.message);
+}));
+// TODO: Lay out rest of the functions here
 //# sourceMappingURL=index.js.map

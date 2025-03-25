@@ -19,6 +19,7 @@ const getBooks = () => __awaiter(void 0, void 0, void 0, function* () {
             .then((snapshot) => {
             return snapshot.docs.map((doc) => doc.data());
         });
+        // TODO: Join the books with any licenses that are available
         return {
             success: true,
             data: books,
@@ -34,6 +35,7 @@ const getBooks = () => __awaiter(void 0, void 0, void 0, function* () {
 exports.getBooks = getBooks;
 const updateBook = (bookId, data) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        // TODO: update any license information
         yield _1.db.collection("books").doc(bookId).update(data);
         return {
             success: true,

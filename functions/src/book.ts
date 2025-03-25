@@ -9,6 +9,7 @@ export const getBooks = async (): Promise<HelperResponse> => {
       .then((snapshot) => {
         return snapshot.docs.map((doc) => doc.data());
       });
+    // TODO: Join the books with any licenses that are available
     return {
       success: true,
       data: books,
@@ -25,6 +26,7 @@ export const updateBook = async (
   data: any
 ): Promise<HelperResponse> => {
   try {
+    // TODO: update any license information
     await db.collection("books").doc(bookId).update(data);
     return {
       success: true,

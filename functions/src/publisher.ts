@@ -11,7 +11,9 @@ export const getPublisherDetails = async (userId: string) => {
   if (userDoc) {
     return {
       success: true,
-      data: userDoc,
+      data: {
+        user: userDoc,
+      },
     };
   } else {
     return {

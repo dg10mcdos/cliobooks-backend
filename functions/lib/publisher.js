@@ -22,7 +22,9 @@ const getPublisherDetails = (userId) => __awaiter(void 0, void 0, void 0, functi
     if (userDoc) {
         return {
             success: true,
-            data: userDoc,
+            data: {
+                user: userDoc,
+            },
         };
     }
     else {
