@@ -51,7 +51,6 @@ export const getPricingRequest = onRequest(async (request, response) => {
 // license-purchase.ts
 export const purchaseLicenseRequest = onRequest(async (request, response) => {
   const purchaseData = request.body;
-  console.log(request.body);
   const result = await purchaseLicense(purchaseData);
   if (!result.success) {
     response.status(500).send(result.message);

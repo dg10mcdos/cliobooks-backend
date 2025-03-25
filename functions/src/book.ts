@@ -23,7 +23,6 @@ export const getBooks = async (): Promise<HelperResponse> => {
       .then((snapshot) => {
         return snapshot.docs.map((doc) => doc.data());
       });
-    logger.log(licenses[1]);
     const booksWithLicenses: BookTableDataRow[] = books.map((book) => {
       const license = licenses.find((license) => license.bookId === book.id);
       return {
@@ -100,7 +99,6 @@ export const assignLicense = async (
         data: license.id,
       };
     } else {
-      logger.log("old license");
       await db.collection("licenseAllocations").doc(oldLicenseId).update({
         status: licenseStatus.INVITE_SENT,
         userEmail: userEmail,
@@ -136,7 +134,6 @@ export const returnLicense = async (
     };
   }
   try {
-    logger.log("LICENCE ID:", book.licenseId);
     await db
       .collection("licenseAllocations")
       .doc(book.licenseId)
@@ -144,15 +141,12 @@ export const returnLicense = async (
         status: licenseStatus.RETURNED,
         updatedAt: Date.now(),
       } as LicenseAllocation);
-    logger.log("hit2");
 
     return {
       success: true,
       message: "License returned successfully",
     };
   } catch (error) {
-    logger.log("hit3");
-
     return {
       success: false,
       message: "Failed to return license",

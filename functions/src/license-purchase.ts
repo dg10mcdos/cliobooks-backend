@@ -1,4 +1,3 @@
-import { logger } from "firebase-functions/v2";
 import { db } from ".";
 import { Purchase, PurchaseRequestData, purchaseStatus, User } from "./types";
 
@@ -24,7 +23,6 @@ export const purchaseLicense = async (purchaseData: PurchaseRequestData) => {
     cost: cost,
     purchaseStatus: purchaseStatus.PENDING,
   } as Purchase;
-  logger.info("Creating purchase");
   await db.collection("purchases").doc(purchaseData.purchaseId).set(purchase);
   await new Promise((resolve) => setTimeout(resolve, 5000));
 

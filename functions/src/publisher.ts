@@ -1,8 +1,6 @@
-import { logger } from "firebase-functions/v2";
 import { db } from ".";
 
 export const getPublisherDetails = async (userId: string) => {
-  logger.log("Getting publisher details", userId);
   const userDoc = await db
     .collection("users")
     .doc(userId)
