@@ -42,11 +42,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateBookRequest = exports.getBooksRequest = exports.seedDatabaseRequest = exports.db = void 0;
+exports.updatePublisherDetailsRequest = exports.getPublisherDetailsRequest = exports.checkPurchaseStatusRequest = exports.purchaseLicenseRequest = exports.getPricingRequest = exports.updateBookRequest = exports.getBooksRequest = exports.seedDatabaseRequest = exports.db = void 0;
 const admin = __importStar(require("firebase-admin"));
 const https_1 = require("firebase-functions/v2/https");
 const seed_database_1 = require("./seed-database");
 const book_1 = require("./book");
+const license_pricing_1 = require("./license-pricing");
+const license_purchase_1 = require("./license-purchase");
+const publisher_1 = require("./publisher");
 admin.initializeApp();
 exports.db = admin.firestore();
 exports.seedDatabaseRequest = (0, https_1.onRequest)((request, response) => __awaiter(void 0, void 0, void 0, function* () {
@@ -57,6 +60,7 @@ exports.seedDatabaseRequest = (0, https_1.onRequest)((request, response) => __aw
     }
     response.send("Database seeded successfully");
 }));
+// book.ts
 exports.getBooksRequest = (0, https_1.onRequest)((request, response) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield (0, book_1.getBooks)();
     if (!result.success) {
@@ -66,8 +70,7 @@ exports.getBooksRequest = (0, https_1.onRequest)((request, response) => __awaite
     response.send(result.data);
 }));
 exports.updateBookRequest = (0, https_1.onRequest)((request, response) => __awaiter(void 0, void 0, void 0, function* () {
-    const { bookId } = request.query;
-    const data = request.body;
+    const { bookId, data } = request.body;
     const result = yield (0, book_1.updateBook)(bookId, data);
     if (!result.success) {
         response.status(500).send("Failed to update book");
@@ -75,5 +78,51 @@ exports.updateBookRequest = (0, https_1.onRequest)((request, response) => __awai
     }
     response.send(result.message);
 }));
-// TODO: Lay out rest of the functions here
+// license-pricing.ts
+exports.getPricingRequest = (0, https_1.onRequest)((request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield (0, license_pricing_1.getPricing)();
+    if (!result.success) {
+        response.status(500).send("Failed to get pricing information");
+        return;
+    }
+    response.send(result.data);
+}));
+// license-purchase.ts
+exports.purchaseLicenseRequest = (0, https_1.onRequest)((request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    const { purchaseData } = request.body;
+    const result = yield (0, license_purchase_1.purchaseLicense)(purchaseData);
+    if (!result.success) {
+        response.status(500).send(result.message);
+        return;
+    }
+    response.send(result.data);
+}));
+exports.checkPurchaseStatusRequest = (0, https_1.onRequest)((request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    const { purchaseId } = request.body;
+    const result = yield (0, license_purchase_1.checkPurchaseStatus)(purchaseId);
+    if (!result.success) {
+        response.status(500).send(result.message);
+        return;
+    }
+    response.send(result.data);
+}));
+// publisher.ts
+exports.getPublisherDetailsRequest = (0, https_1.onRequest)((request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userId } = request.body;
+    const result = yield (0, publisher_1.getPublisherDetails)(userId);
+    if (!result.success) {
+        response.status(500).send(result.message);
+        return;
+    }
+    response.send(result.data);
+}));
+exports.updatePublisherDetailsRequest = (0, https_1.onRequest)((request, response) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userId, data } = request.body;
+    const result = yield (0, publisher_1.updatePublisherDetails)(userId, data);
+    if (!result.success) {
+        response.status(500).send(result.message);
+        return;
+    }
+    response.send(result.message);
+}));
 //# sourceMappingURL=index.js.map

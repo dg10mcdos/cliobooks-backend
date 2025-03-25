@@ -16,7 +16,8 @@ node_modules/
 .firebase/
 
 # Build output
-./lib/
+lib/
+
 ./node_modules/
 
 # IDE files

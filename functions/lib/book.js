@@ -10,22 +10,42 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateBook = exports.getBooks = void 0;
+const v2_1 = require("firebase-functions/v2");
 const _1 = require(".");
 const getBooks = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const licenses = yield _1.db
+            .collection("licenseAllocations")
+            .get()
+            .then((snapshot) => {
+            return snapshot.docs.map((doc) => doc.data());
+        });
         const books = yield _1.db
             .collection("books")
             .get()
             .then((snapshot) => {
             return snapshot.docs.map((doc) => doc.data());
         });
+        v2_1.logger.log(licenses[1]);
+        const booksWithLicenses = books.map((book) => {
+            const license = licenses.find((license) => license.bookId === book.id);
+            return {
+                id: book.id,
+                bookTitle: book.title,
+                lastUpdated: license === null || license === void 0 ? void 0 : license.updatedAt,
+                created: license === null || license === void 0 ? void 0 : license.createdAt,
+                userEmail: license === null || license === void 0 ? void 0 : license.userEmail,
+                license: license === null || license === void 0 ? void 0 : license.id,
+            };
+        });
         // TODO: Join the books with any licenses that are available
         return {
             success: true,
-            data: books,
+            data: booksWithLicenses,
         };
     }
     catch (error) {
+        v2_1.logger.log("Failed to get books", error);
         return {
             success: false,
             message: "Failed to get books",

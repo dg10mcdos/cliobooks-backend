@@ -63,7 +63,7 @@ export type BookTableDataRow = {
   bookTitle: string;
   lastUpdated: number;
   created: number;
-  status: LicenseStatus;
+  license?: LicenseAllocation;
   userEmail: string;
 };
 export type HelperResponse = {

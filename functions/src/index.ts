@@ -2,6 +2,9 @@ import * as admin from "firebase-admin";
 import { onRequest } from "firebase-functions/v2/https";
 import { seedDatabase } from "./seed-database";
 import { getBooks, updateBook } from "./book";
+import { getPricing } from "./license-pricing";
+import { purchaseLicense, checkPurchaseStatus } from "./license-purchase";
+import { getPublisherDetails, updatePublisherDetails } from "./publisher";
 
 admin.initializeApp();
 
@@ -15,6 +18,8 @@ export const seedDatabaseRequest = onRequest(async (request, response) => {
   }
   response.send("Database seeded successfully");
 });
+
+// book.ts
 export const getBooksRequest = onRequest(async (request, response) => {
   const result = await getBooks();
   if (!result.success) {
@@ -24,13 +29,67 @@ export const getBooksRequest = onRequest(async (request, response) => {
   response.send(result.data);
 });
 export const updateBookRequest = onRequest(async (request, response) => {
-  const { bookId } = request.query;
-  const data = request.body;
-  const result = await updateBook(bookId as string, data);
+  const { bookId, data } = request.body;
+  const result = await updateBook(bookId, data);
   if (!result.success) {
     response.status(500).send("Failed to update book");
     return;
   }
   response.send(result.message);
 });
-// TODO: Lay out rest of the functions here
+
+// license-pricing.ts
+export const getPricingRequest = onRequest(async (request, response) => {
+  const result = await getPricing();
+  if (!result.success) {
+    response.status(500).send("Failed to get pricing information");
+    return;
+  }
+  response.send(result.data);
+});
+
+// license-purchase.ts
+export const purchaseLicenseRequest = onRequest(async (request, response) => {
+  const { purchaseData } = request.body;
+  const result = await purchaseLicense(purchaseData);
+  if (!result.success) {
+    response.status(500).send(result.message);
+    return;
+  }
+  response.send(result.data);
+});
+export const checkPurchaseStatusRequest = onRequest(
+  async (request, response) => {
+    const { purchaseId } = request.body;
+    const result = await checkPurchaseStatus(purchaseId);
+    if (!result.success) {
+      response.status(500).send(result.message);
+      return;
+    }
+    response.send(result.data);
+  }
+);
+
+// publisher.ts
+export const getPublisherDetailsRequest = onRequest(
+  async (request, response) => {
+    const { userId } = request.body;
+    const result = await getPublisherDetails(userId);
+    if (!result.success) {
+      response.status(500).send(result.message);
+      return;
+    }
+    response.send(result.data);
+  }
+);
+export const updatePublisherDetailsRequest = onRequest(
+  async (request, response) => {
+    const { userId, data } = request.body;
+    const result = await updatePublisherDetails(userId, data);
+    if (!result.success) {
+      response.status(500).send(result.message);
+      return;
+    }
+    response.send(result.message);
+  }
+);
