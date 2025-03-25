@@ -94,6 +94,23 @@ export const assignLicense = async (
         licenseId: license.id,
       });
       await db.collection("licenseAllocations").doc(license.id).set(license);
+      const oldUser = await db
+        .collection("users")
+        .doc(userId)
+        .get()
+        .then((doc) => {
+          return doc.data();
+        });
+      if (oldUser) {
+        await db
+          .collection("users")
+          .doc(userId)
+          .update({
+            licensesAvailable: oldUser.licensesAvailable - 1,
+            licensesUsed: oldUser.licensesUsed + 1,
+          });
+      }
+
       return {
         success: true,
         data: license.id,
@@ -105,6 +122,22 @@ export const assignLicense = async (
         userId: userId,
         updatedAt: Date.now(),
       });
+      const oldUser = await db
+        .collection("users")
+        .doc(userId)
+        .get()
+        .then((doc) => {
+          return doc.data();
+        });
+      if (oldUser) {
+        await db
+          .collection("users")
+          .doc(userId)
+          .update({
+            licensesAvailable: oldUser.licensesAvailable - 1,
+            licensesUsed: oldUser.licensesUsed + 1,
+          });
+      }
       return {
         success: true,
         data: oldLicenseId,
@@ -141,7 +174,30 @@ export const returnLicense = async (
         status: licenseStatus.RETURNED,
         updatedAt: Date.now(),
       } as LicenseAllocation);
+    const license = await db
+      .collection("licenseAllocations")
+      .doc(book.licenseId)
+      .get()
+      .then((doc) => {
+        return doc.data() as LicenseAllocation;
+      });
 
+    const oldUser = await db
+      .collection("users")
+      .doc(license.userId)
+      .get()
+      .then((doc) => {
+        return doc.data();
+      });
+    if (oldUser) {
+      await db
+        .collection("users")
+        .doc(license.userId)
+        .update({
+          licensesAvailable: oldUser.licensesAvailable + 1,
+          licensesUsed: oldUser.licensesUsed - 1,
+        });
+    }
     return {
       success: true,
       message: "License returned successfully",
