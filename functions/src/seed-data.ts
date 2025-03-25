@@ -1,4 +1,5 @@
 import { Book, LicenseAllocation, User } from "./types";
+import { LicenseTier } from "./types/index";
 
 export const userData = {
   id: "user-1",
@@ -11,24 +12,27 @@ export const userData = {
 
 export const pricingInformation = [
   {
-    tier: "up to 100",
-    lb: 0,
-    ub: 100,
+    tierLabel: "up to 100",
+    id: "tier-1",
+    lowerBound: 0,
+    upperBound: 100,
     price: 500,
   },
   {
-    tier: "up to 500",
+    tierLabel: "up to 500",
+    id: "tier-2",
     price: 400,
-    lb: 101,
-    ub: 500,
+    lowerBound: 101,
+    upperBound: 500,
   },
   {
-    tier: "up to 1000 ",
+    tierLabel: "up to 1000 ",
+    id: "tier-3",
     price: 300,
-    lb: 501,
-    ub: 1000,
+    lowerBound: 501,
+    upperBound: 1000,
   },
-];
+] as LicenseTier[];
 export const licenseAllocationData = [
   {
     id: "license-2",

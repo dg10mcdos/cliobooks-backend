@@ -10,6 +10,7 @@ export type LicenseStatus = keyof typeof licenseStatus;
 export enum purchaseStatus {
   PENDING = "PENDING",
   COMPLETED = "COMPLETED",
+  FAILED = "FAILED",
 }
 export type PurchaseStatus = keyof typeof purchaseStatus;
 
@@ -58,6 +59,7 @@ export type LicenseTier = {
   lowerBound: number;
   upperBound: number;
   price: number;
+  tierLabel: string;
 };
 export type BookTableDataRow = {
   id: string;

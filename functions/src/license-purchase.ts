@@ -1,18 +1,18 @@
+import { logger } from "firebase-functions/v2";
 import { db } from ".";
 import { Purchase, PurchaseRequestData, purchaseStatus, User } from "./types";
 
 export const purchaseLicense = async (purchaseData: PurchaseRequestData) => {
-  const tierDoc = await db
+  const tierData = await db
     .collection("pricingInformation")
     .doc(purchaseData.licenseTierId)
     .get()
     .then((doc) => {
       return doc.data();
     });
-  if (!tierDoc) {
+  if (!tierData) {
     throw new Error("License tier not found");
   }
-  const tierData = tierDoc.data();
   const cost = purchaseData.licenseQuantity * tierData.price;
 
   const purchase = {
@@ -24,10 +24,9 @@ export const purchaseLicense = async (purchaseData: PurchaseRequestData) => {
     cost: cost,
     purchaseStatus: purchaseStatus.PENDING,
   } as Purchase;
-
+  logger.info("Creating purchase");
   await db.collection("purchases").doc(purchaseData.purchaseId).set(purchase);
-
-  await setTimeout(() => {}, 5000);
+  await new Promise((resolve) => setTimeout(resolve, 5000));
 
   if (Math.random() > 0.5) {
     await db.collection("purchases").doc(purchaseData.purchaseId).update({
@@ -76,9 +75,7 @@ export const checkPurchaseStatus = async (purchaseId: string) => {
   } else {
     return {
       success: true,
-      data: {
-        purchaseStatus: purchaseDoc,
-      },
+      data: purchaseDoc,
     };
   }
 };
