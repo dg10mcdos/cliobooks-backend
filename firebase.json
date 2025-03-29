@@ -4,7 +4,7 @@
     "indexes": "firestore.indexes.json"
   },
   "functions": {
-    "source": ".",
+    "source": "./functions",
     "codebase": "default",
     "ignore": [
       "node_modules",
@@ -26,7 +26,8 @@
       "port": 9099
     },
     "functions": {
-      "port": 5001
+      "port": 5001,
+      "host": "localhost"
     },
     "firestore": {
       "port": 8080

@@ -6,7 +6,7 @@ export const userData = {
   email: "acme-publishing@example.com",
   firstName: "Acme",
   lastName: "Publishing",
-  licensesAvailable: 1000,
+  licensesAvailable: 10,
   licensesUsed: 0,
 } as User;
 
