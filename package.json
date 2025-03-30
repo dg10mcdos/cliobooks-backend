@@ -7,6 +7,6 @@
   },
   "scripts": {
     "build:functions": "npm --prefix functions run build",
-    "emulators": "npm run build:functions && firebase emulators:start"
+    "start": "npm run build:functions && firebase emulators:start --import=./emulator-data"
   }
 }
